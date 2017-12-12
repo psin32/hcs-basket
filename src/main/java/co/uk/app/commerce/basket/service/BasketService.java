@@ -8,7 +8,7 @@ import co.uk.app.commerce.basket.document.Basket;
 public interface BasketService {
 
 	Basket persistBasket(Basket basket);
-
+	
 	Basket getCurrentBasketByUserId(String userId);
 
 	Collection<Basket> getBasketByUserIdAndStatus(String userId, String status);
@@ -16,4 +16,6 @@ public interface BasketService {
 	Basket addItem(AddItemBean addItemBean, String userId, String currency);
 	
 	Basket updateBasket(AddItemBean addItemBean, String userId, String currency);
+	
+	Basket deleteItem(String partnumber, String userId, String currency);
 }

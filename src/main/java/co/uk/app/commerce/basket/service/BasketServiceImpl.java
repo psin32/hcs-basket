@@ -32,7 +32,7 @@ public class BasketServiceImpl implements BasketService {
 	public Basket getCurrentBasketByUserId(String userId) {
 		Collection<Basket> baskets = basketRepository.findByUserIdAndStatus(userId, "P");
 		if (null == baskets || baskets.isEmpty()) {
-			return null;
+			return new Basket();
 		}
 		return baskets.stream().findFirst().orElse(null);
 	}
@@ -46,10 +46,10 @@ public class BasketServiceImpl implements BasketService {
 	public Basket addItem(AddItemBean addItemBean, String userId, String currency) {
 		Catentry catentry = catentryRepository.findByPartnumber(addItemBean.getPartnumber());
 		Basket basket = null;
-		if (null != catentry) {
+		if (null != catentry && null != userId) {
 			basket = getCurrentBasketByUserId(userId);
 			List<Items> items = new ArrayList<>();
-			if (null == basket) {
+			if (basket.getId() == null) {
 				basket = new Basket();
 				basket.setUserId(userId);
 				basket.setStatus("P");
@@ -59,14 +59,23 @@ public class BasketServiceImpl implements BasketService {
 			items = getItemDetails(addItemBean, currency, catentry, items, true);
 			basket.setItems(items);
 			DecimalFormat formatter = new DecimalFormat("#0.00");
-			basket.setBasketTotal(Double.valueOf(formatter.format(items.stream().mapToDouble(item -> item.getItemtotal()).sum())));
+			basket.setBasketTotal(
+					Double.valueOf(formatter.format(items.stream().mapToDouble(item -> item.getItemtotal()).sum())));
 		}
-		return basket;
+		Basket updatedBasket = new Basket();
+		if (null != basket) {
+			if (basket.getItems().size() == 0) {
+				basketRepository.delete(basket.getId());
+			} else {
+				updatedBasket = basketRepository.save(basket);
+			}
+		}
+		return updatedBasket;
 	}
 
 	private Double calculateItemTotal(Double listPrice, Integer quantity) {
 		Double itemTotal = listPrice * quantity;
-		DecimalFormat formatter = new DecimalFormat("#0.00"); 
+		DecimalFormat formatter = new DecimalFormat("#0.00");
 		return Double.valueOf(formatter.format(itemTotal));
 	}
 
@@ -77,7 +86,7 @@ public class BasketServiceImpl implements BasketService {
 		List<Items> newList = new ArrayList<>();
 		Items items = null;
 
-		if (itemsList.size() > 0) {
+		if (null != itemsList && itemsList.size() > 0) {
 			items = itemsList.stream().filter(item -> item.getPartnumber().equalsIgnoreCase(partnumber)).findAny()
 					.orElse(null);
 			newList = itemsList.stream().filter(item -> !item.getPartnumber().equalsIgnoreCase(partnumber))
@@ -152,6 +161,35 @@ public class BasketServiceImpl implements BasketService {
 			basket.setItems(items);
 			basket.setBasketTotal(items.stream().mapToDouble(item -> item.getItemtotal()).sum());
 		}
-		return basket;
+		Basket updatedBasket = new Basket();
+		if (null != basket) {
+			if (basket.getItems().size() == 0) {
+				basketRepository.delete(basket.getId());
+			} else {
+				updatedBasket = basketRepository.save(basket);
+			}
+		}
+		return updatedBasket;
+	}
+
+	@Override
+	public Basket deleteItem(String partnumber, String userId, String currency) {
+		Basket basket = getCurrentBasketByUserId(userId);
+		List<Items> items = new ArrayList<>();
+		Basket updatedBasket = new Basket();
+		if (null != basket) {
+			items = basket.getItems();
+			if (null != items && !items.isEmpty()) {
+				basket.setItems(items.stream().filter(item -> !item.getPartnumber().equalsIgnoreCase(partnumber))
+						.collect(Collectors.toList()));
+				if (basket.getItems().size() == 0) {
+					basketRepository.delete(basket.getId());
+				} else {
+					basket.setBasketTotal(basket.getItems().stream().mapToDouble(item -> item.getItemtotal()).sum());
+					updatedBasket = basketRepository.save(basket);
+				}
+			}
+		}
+		return updatedBasket;
 	}
 }

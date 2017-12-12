@@ -1,12 +1,16 @@
 package co.uk.app.commerce.basket.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,18 +28,46 @@ public class BasketController {
 	private BasketService basketService;
 
 	@GetMapping
-	public @ResponseBody Basket getBasketByUserId(HttpServletRequest request) {
+	public @ResponseBody Basket getBasketByUserId(HttpServletRequest request, HttpServletResponse response) {
 		String userId = String.valueOf(request.getAttribute("USER_ID"));
-		return basketService.getCurrentBasketByUserId(userId);
+		Basket basket = basketService.getCurrentBasketByUserId(userId);
+		String cookieValue = "0";
+		if (null != basket.getId()) {
+			cookieValue = String.valueOf(basket.getItems().stream().mapToInt(item -> item.getQuantity()).sum());
+		}
+		Cookie cookie = new Cookie("BASKET_COUNT", cookieValue);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+		return basket;
 	}
 
 	@PatchMapping
-	public ResponseEntity<?> updateBasket(@RequestBody AddItemBean addItemBean, HttpServletRequest request) {
+	public ResponseEntity<?> updateBasket(@RequestBody AddItemBean addItemBean, HttpServletRequest request,
+			HttpServletResponse response) {
 		String userId = String.valueOf(request.getAttribute("USER_ID"));
 		Basket basket = basketService.updateBasket(addItemBean, userId, "GBP");
-		if (null != basket) {
-			return ResponseEntity.ok(basketService.persistBasket(basket));
+		String cookieValue = "0";
+		if (null != basket.getId()) {
+			cookieValue = String.valueOf(basket.getItems().stream().mapToInt(item -> item.getQuantity()).sum());
 		}
-		return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		Cookie cookie = new Cookie("BASKET_COUNT", cookieValue);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+		return ResponseEntity.ok(basket);
+	}
+	
+	@DeleteMapping(path = "/{partnumber}")
+	public ResponseEntity<?> deleteItem(@PathVariable("partnumber") String partnumber, HttpServletRequest request,
+			HttpServletResponse response) {
+		String userId = String.valueOf(request.getAttribute("USER_ID"));
+		Basket basket = basketService.deleteItem(partnumber, userId, "GBP");
+		String cookieValue = "0";
+		if (null != basket.getId()) {
+			cookieValue = String.valueOf(basket.getItems().stream().mapToInt(item -> item.getQuantity()).sum());
+		}
+		Cookie cookie = new Cookie("BASKET_COUNT", cookieValue);
+		cookie.setPath("/");
+		response.addCookie(cookie);
+		return ResponseEntity.ok(basket);
 	}
 }
