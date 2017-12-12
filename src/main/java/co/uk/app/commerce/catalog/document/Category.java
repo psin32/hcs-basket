@@ -1,4 +1,4 @@
-package co.uk.app.commerce.catalog.bean;
+package co.uk.app.commerce.catalog.document;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -13,6 +13,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import co.uk.app.commerce.catalog.bean.Association;
+import co.uk.app.commerce.catalog.bean.Description;
+import co.uk.app.commerce.catalog.bean.Image;
 
 @Document(collection = "basketcategory")
 @JsonIgnoreProperties(ignoreUnknown = true)

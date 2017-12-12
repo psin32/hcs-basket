@@ -12,7 +12,7 @@ import co.uk.app.commerce.basket.bean.Promotion;
 public class Basket {
 
 	@Id
-	private String basketId;
+	private String id;
 
 	private String userId;
 
@@ -22,20 +22,14 @@ public class Basket {
 
 	private List<Promotion> promotions;
 
+	private Double basketTotal;
+
 	public String getUserId() {
 		return userId;
 	}
 
 	public void setUserId(String userId) {
 		this.userId = userId;
-	}
-
-	public String getBasketId() {
-		return basketId;
-	}
-
-	public void setBasketId(String basketId) {
-		this.basketId = basketId;
 	}
 
 	public String getStatus() {
@@ -60,6 +54,22 @@ public class Basket {
 
 	public void setPromotions(List<Promotion> promotions) {
 		this.promotions = promotions;
+	}
+
+	public Double getBasketTotal() {
+		return basketTotal;
+	}
+
+	public void setBasketTotal(Double basketTotal) {
+		this.basketTotal = basketTotal;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

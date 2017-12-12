@@ -19,6 +19,8 @@ public class Items {
 	private Integer quantity;
 
 	private Double itemtotal;
+	
+	private String url;
 
 	private List<Promotion> promotions;
 
@@ -92,6 +94,14 @@ public class Items {
 
 	public void setPromotions(List<Promotion> promotions) {
 		this.promotions = promotions;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 }

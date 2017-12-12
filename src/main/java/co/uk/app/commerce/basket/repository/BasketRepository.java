@@ -8,7 +8,5 @@ import co.uk.app.commerce.basket.document.Basket;
 
 public interface BasketRepository extends MongoRepository<Basket, String> {
 
-	Basket findByBasketId(String basketId);
-
 	Collection<Basket> findByUserIdAndStatus(String userId, String status);
 }

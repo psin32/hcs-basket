@@ -12,7 +12,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @SpringBootApplication
-@ComponentScan({ "co.uk.app.commerce.basket", "co.uk.app.commerce.kafka" })
+@ComponentScan({ "co.uk.app.commerce.basket", "co.uk.app.commerce.additem" })
 @EnableMongoRepositories(basePackages = { "co.uk.app.commerce.basket", "co.uk.app.commerce.catalog" })
 public class BasketApplication {
 
