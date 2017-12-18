@@ -9,6 +9,16 @@ public class KafkaResponse {
 
 	private Category after;
 
+	private Category patch;
+
+	public Category getPatch() {
+		return patch;
+	}
+
+	public void setPatch(Category patch) {
+		this.patch = patch;
+	}
+
 	public Category getAfter() {
 		return after;
 	}

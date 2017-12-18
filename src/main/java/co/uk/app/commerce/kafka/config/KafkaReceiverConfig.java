@@ -21,7 +21,7 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 @EnableKafka
 public class KafkaReceiverConfig {
 
-	@Value("${kafka.bootstrap.servers}")
+	@Value("${kafka.config.bootstrap.servers}")
 	private String bootstrapServers;
 
 	@Bean

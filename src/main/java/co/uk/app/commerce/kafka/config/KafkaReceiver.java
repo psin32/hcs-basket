@@ -38,24 +38,24 @@ public class KafkaReceiver {
 	public void categoryReceive(ConsumerRecord<?, ?> record) {
 		LOGGER.info("received payload='{}'", record.value());
 
-		JsonNode data;
-		try {
-			objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
-			data = objectMapper.readTree(record.value().toString().getBytes());
-		} catch (Exception e) {
-			throw new SerializationException(e);
-		}
-
-		try {
-			KafkaResponse kafkaResponse = objectMapper.treeToValue(data, KafkaResponse.class);
-			categoryRepository.save(kafkaResponse.getAfter());
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		JsonNode data;
+//		try {
+//			objectMapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+//			data = objectMapper.readTree(record.value().toString().getBytes());
+//		} catch (Exception e) {
+//			throw new SerializationException(e);
+//		}
+//
+//		try {
+//			KafkaResponse kafkaResponse = objectMapper.treeToValue(data, KafkaResponse.class);
+//			categoryRepository.save(kafkaResponse.getAfter());
+//		} catch (JsonParseException e) {
+//			e.printStackTrace();
+//		} catch (JsonMappingException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		latch.countDown();
 	}
 }
