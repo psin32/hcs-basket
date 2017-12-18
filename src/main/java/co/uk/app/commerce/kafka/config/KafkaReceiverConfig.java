@@ -24,6 +24,9 @@ public class KafkaReceiverConfig {
 	@Value("${kafka.config.bootstrap.servers}")
 	private String bootstrapServers;
 
+	@Value("${kafka.config.schema.registry.url}")
+	private String schemaRegistryURL;
+
 	@Bean
 	public Map<String, Object> consumerConfigs() {
 		Map<String, Object> props = new HashMap<>();
@@ -35,7 +38,7 @@ public class KafkaReceiverConfig {
 		// allows a pool of processes to divide the work of consuming and
 		// processing records
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, "test-consumer-group");
-		props.put("schema.registry.url", "http://localhost:8081");
+		props.put("schema.registry.url", schemaRegistryURL);
 		return props;
 	}
 
