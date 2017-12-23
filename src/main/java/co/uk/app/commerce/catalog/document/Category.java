@@ -45,7 +45,7 @@ public class Category {
 
 	private String url;
 
-	private String lastupdate = new SimpleDateFormat("dd-MM-yy HH:mm:SS").format(new Date());
+	private String lastupdate = new SimpleDateFormat("dd-MM-yy HH:mm:ss.SS").format(new Date());
 
 	@JsonCreator
 	public static Category Create(String jsonString) throws JsonParseException, JsonMappingException, IOException {

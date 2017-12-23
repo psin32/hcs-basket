@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,12 @@ public class BasketServiceImpl implements BasketService {
 			if (basket.getId() == null) {
 				basket = new Basket();
 				basket.setUserId(userId);
+				basket.setBasketId(UUID.randomUUID().toString());
 				basket.setStatus("P");
 			} else {
+				if (null == basket.getBasketId()) {
+					basket.setBasketId(UUID.randomUUID().toString());
+				}
 				items = basket.getItems();
 			}
 			items = getItemDetails(addItemBean, currency, catentry, items, true);
@@ -64,7 +69,7 @@ public class BasketServiceImpl implements BasketService {
 		}
 		Basket updatedBasket = new Basket();
 		if (null != basket) {
-			if (basket.getItems().size() == 0) {
+			if (basket.getItems().isEmpty()) {
 				basketRepository.delete(basket.getId());
 			} else {
 				updatedBasket = basketRepository.save(basket);
@@ -163,7 +168,7 @@ public class BasketServiceImpl implements BasketService {
 		}
 		Basket updatedBasket = new Basket();
 		if (null != basket) {
-			if (basket.getItems().size() == 0) {
+			if (basket.getItems().isEmpty()) {
 				basketRepository.delete(basket.getId());
 			} else {
 				updatedBasket = basketRepository.save(basket);
@@ -175,14 +180,14 @@ public class BasketServiceImpl implements BasketService {
 	@Override
 	public Basket deleteItem(String partnumber, String userId, String currency) {
 		Basket basket = getCurrentBasketByUserId(userId);
-		List<Items> items = new ArrayList<>();
+		List<Items> items = null;
 		Basket updatedBasket = new Basket();
 		if (null != basket) {
 			items = basket.getItems();
 			if (null != items && !items.isEmpty()) {
 				basket.setItems(items.stream().filter(item -> !item.getPartnumber().equalsIgnoreCase(partnumber))
 						.collect(Collectors.toList()));
-				if (basket.getItems().size() == 0) {
+				if (basket.getItems().isEmpty()) {
 					basketRepository.delete(basket.getId());
 				} else {
 					basket.setBasketTotal(basket.getItems().stream().mapToDouble(item -> item.getItemtotal()).sum());

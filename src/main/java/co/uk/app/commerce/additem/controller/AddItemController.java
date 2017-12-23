@@ -23,7 +23,7 @@ public class AddItemController {
 	private BasketService basketService;
 
 	@PutMapping
-	public ResponseEntity<?> addItem(@RequestBody AddItemBean addItemBean, HttpServletRequest request,
+	public ResponseEntity<Basket> addItem(@RequestBody AddItemBean addItemBean, HttpServletRequest request,
 			HttpServletResponse response) {
 		String userId = String.valueOf(request.getAttribute("USER_ID"));
 		Basket basket = basketService.addItem(addItemBean, userId, "GBP");

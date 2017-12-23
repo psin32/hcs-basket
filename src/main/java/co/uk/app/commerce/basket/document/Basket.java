@@ -16,6 +16,8 @@ public class Basket {
 
 	private String userId;
 
+	private String basketId;
+
 	private String status;
 
 	private List<Items> items;
@@ -30,6 +32,14 @@ public class Basket {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getBasketId() {
+		return basketId;
+	}
+
+	public void setBasketId(String basketId) {
+		this.basketId = basketId;
 	}
 
 	public String getStatus() {

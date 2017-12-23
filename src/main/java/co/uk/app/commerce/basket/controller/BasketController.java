@@ -4,10 +4,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.state.KeyValueIterator;
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import co.uk.app.commerce.additem.bean.AddItemBean;
 import co.uk.app.commerce.basket.document.Basket;
 import co.uk.app.commerce.basket.service.BasketService;
-import co.uk.app.commerce.kafka.config.KafkaStreamConfig;
 
 @RestController
 @RequestMapping("/api/basket")
@@ -31,29 +26,8 @@ public class BasketController {
 	@Autowired
 	private BasketService basketService;
 
-	@Autowired
-	private KafkaStreamConfig kafkaStreamConfig;
-
 	@GetMapping
 	public @ResponseBody Basket getBasketByUserId(HttpServletRequest request, HttpServletResponse response) {
-		ReadOnlyKeyValueStore<String, GenericRecord> myStore = null;
-		try {
-			myStore = kafkaStreamConfig.readStore();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("=============================");
-		System.out.println(myStore.approximateNumEntries());
-		System.out.println(myStore.toString());
-		KeyValueIterator<String, GenericRecord> keyIterator = myStore.all();
-		while(keyIterator.hasNext()) {
-			KeyValue<String, GenericRecord> keyValue = keyIterator.next();
-			System.out.println("Key - " +keyValue.key);
-			System.out.println("Value - "+keyValue.value);
-		}
-		System.out.println("=============================");
-
 		String userId = String.valueOf(request.getAttribute("USER_ID"));
 		Basket basket = basketService.getCurrentBasketByUserId(userId);
 		String cookieValue = "0";
